@@ -7,7 +7,13 @@ import org.junit.runner.RunWith;
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
         features = "src/test/resources/features",
-        glue = "com.banistmo.automation.stepdefinitions",
-        snippets = CucumberOptions.SnippetType.CAMELCASE
-)
-public class ConvertidorTasasRunner {}
+        glue = {"steps", "userinterfaces"},
+        plugin = {
+                "pretty",
+                "html:target/serenity-reports/html",
+                "json:target/serenity-reports/json/cucumber.json"
+        },
+        stepNotifications = true
+        )
+public class ConvertidorTasasRunner {
+}

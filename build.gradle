@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'net.serenity-bdd.serenity-gradle-plugin' version '4.0.30' // ✅ Mantener igual
+    id 'net.serenity-bdd.serenity-gradle-plugin' version '4.0.30' // Mantener igual
 }
 
-group = 'com.banistmo.automation' // ⭐ Nuevo: Define tu grupo de paquetes
-version = '1.0.0' // ⭐ Nuevo: Versión del proyecto
+group = 'com.banistmo.automation' // Nuevo: Define tu grupo de paquetes
+version = '1.0.0' // Nuevo: Versión del proyecto
 
 repositories {
     mavenCentral()
@@ -25,7 +25,7 @@ dependencies {
     // JUnit (actualización menor)
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.10.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0' // ⭐ Nuevo para JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0' // Nuevo para JUnit 5
 
     // Selenium y WebDriver
     implementation 'org.seleniumhq.selenium:selenium-java:4.15.0'
@@ -51,6 +51,6 @@ test {
 
 serenity {
     reports = ["single-page-html"]
-    testRoot = "com.banistmo.automation.runners"
+    testRoot = "runners"
     requirementsBaseDir = "src/test/resources/features" // Directorio base
 }

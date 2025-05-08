@@ -6,21 +6,21 @@ import org.openqa.selenium.By;
 
 public class ConvertidorTasasPage extends PageObject {
 
-    public static final Target OPCION_NOMINAL_A_EFECTIVA = Target.the("Opción Nominal a Efectiva")
-            .located(By.xpath("//button[contains(text(),'nominal a efectiva')]"));
+    public static final Target CALCULAR_BUTTON = Target.the("Botón Calcular")
+            .located(By.id("btntoolUno"));
+    public static final Target TASA_INPUT =
+            Target.the("Campo tasa de interés")
+                    .located(By.id("interes"));
 
-    public static final Target TASA_INTERES_INPUT = Target.the("Campo Tasa de Interés")
-            .located(By.id("tasaInteres"));
+    public static final Target PERIODICIDAD_SELECT =
+            Target.the("Select periodicidad")
+                    .located(By.id("periodicidad-deseada"));
 
-    public static final Target PERIODICIDAD_DROPDOWN = Target.the("Dropdown Periodicidad")
-            .located(By.name("periodicidad"));
+    public static final Target CAPITALIZACION_SELECT =
+            Target.the("Select capitalización")
+                    .located(By.id("capitalizacion"));
 
-    public static final Target CAPITALIZACION_DROPDOWN = Target.the("Dropdown Capitalización")
-            .located(By.name("capitalizacion"));
-
-    public static final Target BOTON_CALCULAR = Target.the("Botón Calcular")
-            .located(By.xpath("//button[contains(text(),'Calcular')]"));
-
-    public static final Target RESULTADO_TEXT = Target.the("Texto Resultado")
-            .located(By.cssSelector(".resultado span"));
+    public static final Target RESULTADO =
+            Target.the("Porcentaje resultado")
+                    .located(By.id("respuesta"));
 }

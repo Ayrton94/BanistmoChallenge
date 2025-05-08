@@ -1,75 +1,87 @@
 package steps;
 
-import io.cucumber.java.Before;
-import io.cucumber.java.es.*;
-import net.serenitybdd.screenplay.actions.Click;
-import net.serenitybdd.screenplay.actions.Enter;
-import net.serenitybdd.screenplay.actions.SelectFromOptions;
-import net.serenitybdd.screenplay.actors.OnStage;
-import net.serenitybdd.screenplay.actors.OnlineCast;
-import net.serenitybdd.screenplay.questions.Text;
-import tasks.NavegarA;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import net.serenitybdd.annotations.Managed;
+import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
+import net.serenitybdd.screenplay.actions.*;
+import net.serenitybdd.screenplay.waits.WaitUntil;
+import org.openqa.selenium.WebDriver;
+import questions.TasaConvertida;
 import userinterfaces.pages.BancolombiaHomePage;
 import userinterfaces.pages.ConvertidorTasasPage;
 
 import static net.serenitybdd.screenplay.GivenWhenThen.*;
-import static net.serenitybdd.screenplay.actors.OnStage.*;
+import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.*;
 import static org.hamcrest.Matchers.*;
+import static userinterfaces.pages.ConvertidorTasasPage.CAPITALIZACION_SELECT;
+import static userinterfaces.pages.ConvertidorTasasPage.PERIODICIDAD_SELECT;
 
 public class ConvertidorTasasSteps {
 
-    @Before
-    public void setTheStage() {
-        OnStage.setTheStage(new OnlineCast());
-    }
+    @Managed
+    private WebDriver driver;
+    private Actor usuario;
 
-    @Dado("que {string} accede a la página de herramientas de Bancolombia")
-    public void accederAPagina(String nombreActor) {
-        theActorCalled(nombreActor).attemptsTo(
-                NavegarA.laPaginaDeHerramientas()
+    @Given("se ingresa a la pagina de Negocios con la opcion Herramientas")
+    public void ingresarAHerramientas() {
+        usuario = Actor.named("Cliente Bancolombia")
+                .whoCan(BrowseTheWeb.with(driver));
+
+        usuario.attemptsTo(
+                Open.url("https://www.bancolombia.com/negocios/herramientas")
+                //WaitUntil.the(MENU_FINANZAS, isClickable())
         );
     }
 
-    @Cuando("selecciona la opción {string} del menú principal")
-    public void seleccionarOpcionMenu(String opcion) {
-        theActorInTheSpotlight().attemptsTo(
-                Click.on(BancolombiaHomePage.MENU_NEGOCIOS)
+    @When("se selecciona la opcion {string}")
+    public void seleccionarOpcionFinanzas(String nombreOpcion) {
+        usuario.attemptsTo(
+                // 1. Click en la flecha
+                Click.on(BancolombiaHomePage.flechaDespliegueFinanzas()),
+
+                // 2. Espera para la opción
+                WaitUntil.the(
+                        BancolombiaHomePage.opcionFinanzas(nombreOpcion),
+                        isVisible() // Solo verifica visibilidad
+                ).forNoMoreThan(15).seconds(),
+
+                // 3. Scroll + Click
+                Scroll.to(BancolombiaHomePage.opcionFinanzas(nombreOpcion)),
+                Click.on(BancolombiaHomePage.opcionFinanzas(nombreOpcion))
         );
     }
 
-    @Cuando("accede a la sección {string}")
-    public void accederASeccion(String seccion) {
-        // Implementación simple sin task específica
-        theActorInTheSpotlight().attemptsTo(
-                Click.on(BancolombiaHomePage.SECCION_HERRAMIENTAS)
-        );
-    }
-
-    @Cuando("selecciona la herramienta {string}")
+    @And("se selecciona la herramienta {string}")
     public void seleccionarHerramienta(String herramienta) {
-        // Implementación directa sin task específica
-        theActorInTheSpotlight().attemptsTo(
-                Click.on(BancolombiaHomePage.CONVERTIDOR_TASAS)
+        usuario.attemptsTo(
+                Click.on(BancolombiaHomePage.herramientaPorNombre(herramienta)),
+                Switch.toNewWindow()
         );
     }
 
-    @Cuando("realiza la conversión con tasa {string}, periodicidad {string} y capitalización {string}")
+    @And("se realiza la conversión con tasa {string}, periodicidad {string} y capitalización {string}")
     public void realizarConversion(String tasa, String periodicidad, String capitalizacion) {
-        theActorInTheSpotlight().attemptsTo(
-                Click.on(ConvertidorTasasPage.OPCION_NOMINAL_A_EFECTIVA),
-                Enter.theValue(tasa).into(ConvertidorTasasPage.TASA_INTERES_INPUT),
-                SelectFromOptions.byVisibleText(periodicidad).from(ConvertidorTasasPage.PERIODICIDAD_DROPDOWN),
-                SelectFromOptions.byVisibleText(capitalizacion).from(ConvertidorTasasPage.CAPITALIZACION_DROPDOWN),
-                Click.on(ConvertidorTasasPage.BOTON_CALCULAR)
-        );
+        usuario.attemptsTo(
+                Click.on(BancolombiaHomePage.BOTON_CALCULAR),
+                Enter.theValue(tasa).into(ConvertidorTasasPage.TASA_INPUT),
+                SelectFromOptions.byVisibleText("Semestral").from(PERIODICIDAD_SELECT),
+                SelectFromOptions.byVisibleText("Anual").from(CAPITALIZACION_SELECT),
+                WaitUntil.the(ConvertidorTasasPage.RESULTADO, isVisible()).forNoMoreThan(5).seconds()        );
     }
 
-    @Entonces("debe visualizar el resultado {string}")
+
+    @Then("se debe visualizar el resultado {string}")
     public void verificarResultado(String resultadoEsperado) {
-        theActorInTheSpotlight().should(
-                seeThat("El resultado de la conversión",
-                        Text.of(ConvertidorTasasPage.RESULTADO_TEXT).asString(),
-                        containsString(resultadoEsperado))
+        usuario.should(
+                seeThat(
+                        "El porcentaje mostrado",
+                        TasaConvertida.valor(),
+                        equalTo(resultadoEsperado)
+                )
         );
     }
 }

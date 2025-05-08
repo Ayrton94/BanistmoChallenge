@@ -1,11 +1,10 @@
 # features/convertidor_tasas.feature
 
-Feature: Convertidor de Tasas de Interés
+Feature: Convertidor de Tasas de Interés Bancolombia
 
-  Scenario: Convertir tasa nominal a efectiva
-  Dado que "Usuario" accede a la página de herramientas de Bancolombia
-  Cuando selecciona la opción "Negocios" del menú principal
-  Y accede a la sección "Herramientas"
-  Y selecciona la herramienta "Convertidor de tasas de interés"
-  Y realiza la conversión con tasa "20", periodicidad "Semestral" y capitalización "Anual"
-  Entonces debe visualizar el resultado "9.54%"
+  Scenario: Conversión de tasa semestral a anual
+    Given se ingresa a la pagina de Negocios con la opcion Herramientas
+    When se selecciona la opcion "Gestionar las finanzas de mi negocio"
+    And se selecciona la herramienta "Convertidor de tasas de interés"
+    And se realiza la conversión con tasa "20", periodicidad "Semestral" y capitalización "Anual"
+    Then se debe visualizar el resultado "9.54 %"
